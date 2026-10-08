@@ -1,9 +1,13 @@
 import axios from 'axios';
 
 const getApiBaseUrl = () => {
-    const envUrl = import.meta.env.VITE_API_URL;
-    if (envUrl && envUrl.trim().length > 0) {
-        return envUrl.trim().replace(/\/+$/, '');
+    let envUrl = import.meta.env.VITE_API_URL;
+    if (envUrl && typeof envUrl === 'string' && envUrl.trim().length > 0) {
+        envUrl = envUrl.trim().replace(/\/+$/, '');
+        if (envUrl.endsWith('/api')) {
+            envUrl = envUrl.slice(0, -4);
+        }
+        return envUrl;
     }
     return '';
 };
