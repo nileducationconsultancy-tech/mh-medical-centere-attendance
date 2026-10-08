@@ -15,12 +15,38 @@ if (!cached) {
     cached = global.mongoose = { conn: null, promise: null };
 }
 
+const cleanMongoUri = (rawUri) => {
+    if (!rawUri) return '';
+    let cleaned = String(rawUri).trim();
+    
+    // In case the entire line "MONGODB_URI=..." was pasted into the Vercel env variable value
+    if (cleaned.startsWith('MONGODB_URI=')) {
+        cleaned = cleaned.replace(/^MONGODB_URI=/, '').trim();
+    }
+    if (cleaned.startsWith('MONGO_URI=')) {
+        cleaned = cleaned.replace(/^MONGO_URI=/, '').trim();
+    }
+    
+    // Strip surrounding quotes (double quotes, single quotes, backticks)
+    while (
+        (cleaned.startsWith('"') && cleaned.endsWith('"')) ||
+        (cleaned.startsWith("'") && cleaned.endsWith("'")) ||
+        (cleaned.startsWith('`') && cleaned.endsWith('`'))
+    ) {
+        cleaned = cleaned.slice(1, -1).trim();
+    }
+    
+    return cleaned;
+};
+
 const connectDB = async () => {
     if (cached.conn && mongoose.connection.readyState >= 1) {
         return cached.conn;
     }
 
-    const mongoUri = process.env.MONGODB_URI || process.env.MONGO_URI;
+    const rawUri = process.env.MONGODB_URI || process.env.MONGO_URI;
+    const mongoUri = cleanMongoUri(rawUri);
+
     if (!mongoUri) {
         console.error('❌ MONGODB_URI is not defined in environment variables.');
         throw new Error('MONGODB_URI environment variable is required in Vercel settings');
@@ -51,3 +77,4 @@ const connectDB = async () => {
 };
 
 module.exports = connectDB;
+
