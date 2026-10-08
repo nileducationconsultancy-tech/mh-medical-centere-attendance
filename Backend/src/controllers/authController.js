@@ -48,10 +48,20 @@ const loginUser = async (req, res) => {
         const rawPassword = String(password);
         const cleanPassword = rawPassword.trim();
 
-        // Case-insensitive query
-        const user = await User.findOne({
-            email: { $regex: new RegExp(`^${cleanEmail.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') }
-        }).populate('employeeId');
+        // Check if database is empty (first run bootstrap)
+        const userCount = await User.countDocuments();
+        if (userCount === 0) {
+            const seedAdmin = require('../scripts/seedAdmin');
+            await seedAdmin();
+        }
+
+        // Exact match with case-insensitive fallback
+        let user = await User.findOne({ email: cleanEmail }).populate('employeeId');
+        if (!user) {
+            user = await User.findOne({
+                email: { $regex: new RegExp(`^${cleanEmail.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') }
+            }).populate('employeeId');
+        }
         
         if (user) {
             const isMatch = (await user.matchPassword(rawPassword)) || (await user.matchPassword(cleanPassword));

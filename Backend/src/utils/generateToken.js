@@ -9,12 +9,18 @@ const generateToken = (res, userId) => {
 
     const isProduction = process.env.NODE_ENV === 'production';
 
-    res.cookie('jwt', token, {
-        httpOnly: true,
-        secure: isProduction, // HTTPS in production
-        sameSite: isProduction ? 'none' : 'lax', // 'none' required for cross-domain cookies (Vercel <-> Render)
-        maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
-    });
+    if (res && typeof res.cookie === 'function') {
+        try {
+            res.cookie('jwt', token, {
+                httpOnly: true,
+                secure: isProduction, // HTTPS in production
+                sameSite: isProduction ? 'none' : 'lax', // 'none' required for cross-domain cookies
+                maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+            });
+        } catch (e) {
+            console.warn('Cookie setting failed:', e.message);
+        }
+    }
 
     return token;
 };

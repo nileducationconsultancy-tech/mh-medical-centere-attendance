@@ -62,13 +62,20 @@ app.use(async (req, res, next) => {
         await connectDB();
         if (!isInitialized) {
             isInitialized = true;
-            seedAdmin().catch(console.error);
-            seedDefaultDocumentTypes().catch(console.error);
+            try {
+                await seedAdmin();
+                await seedDefaultDocumentTypes();
+            } catch (seedErr) {
+                console.error('Bootstrap seeding warning:', seedErr.message);
+            }
         }
         next();
     } catch (err) {
         console.error('Database connection error in request:', err);
-        return res.status(500).json({ success: false, message: 'Database connection failed' });
+        return res.status(500).json({ 
+            success: false, 
+            message: 'Database connection failed: ' + (err.message || 'Check MONGODB_URI and Network Access in MongoDB Atlas')
+        });
     }
 });
 
