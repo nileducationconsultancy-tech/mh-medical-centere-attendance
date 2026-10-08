@@ -104,9 +104,18 @@ app.use('/api/payslips', payslipRoutes);
 app.use('/api/documents', documentRoutes);
 app.use('/api/document-types', documentTypeRoutes);
 
-// Health check endpoint
+// Health check endpoint with database diagnostics
 app.get('/api/health', (req, res) => {
-    res.status(200).json({ status: 'ok', time: new Date() });
+    const mongoose = require('mongoose');
+    const isDbConnected = mongoose.connection.readyState === 1;
+    res.status(isDbConnected ? 200 : 503).json({ 
+        status: isDbConnected ? 'ok' : 'degraded',
+        database: isDbConnected ? 'connected' : 'disconnected',
+        hasMongoUriConfigured: Boolean(process.env.MONGODB_URI || process.env.MONGO_URI),
+        dbHost: mongoose.connection.host || null,
+        dbName: mongoose.connection.name || null,
+        time: new Date()
+    });
 });
 
 // Start Cron Jobs (for non-serverless environments)
