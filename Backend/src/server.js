@@ -27,6 +27,7 @@ const allowedOrigins = [
     'http://localhost:5173',
     'http://localhost:3000',
     'https://mh-medical-centere-attendance-rm76.vercel.app',
+    'https://mhmedical.attendance.wciecdelhi.com',
     process.env.CLIENT_URL,
     process.env.FRONTEND_URL
 ].filter(Boolean);
@@ -37,6 +38,7 @@ app.use(cors({
         if (
             allowedOrigins.includes(origin) ||
             origin.endsWith('.vercel.app') ||
+            origin.endsWith('wciecdelhi.com') ||
             origin.includes('localhost')
         ) {
             return callback(null, true);
