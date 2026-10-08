@@ -9,32 +9,45 @@ try {
     // Ignore if not supported in custom environment
 }
 
-let isConnected = false;
+let cached = global.mongoose;
+
+if (!cached) {
+    cached = global.mongoose = { conn: null, promise: null };
+}
 
 const connectDB = async () => {
-    if (isConnected || mongoose.connection.readyState >= 1) {
-        return;
+    if (cached.conn && mongoose.connection.readyState >= 1) {
+        return cached.conn;
     }
+
+    const mongoUri = process.env.MONGODB_URI || process.env.MONGO_URI;
+    if (!mongoUri) {
+        console.error('❌ MONGODB_URI is not defined in environment variables.');
+        throw new Error('MONGODB_URI environment variable is required in Vercel settings');
+    }
+
+    if (!cached.promise) {
+        const opts = {
+            serverSelectionTimeoutMS: 10000,
+            maxPoolSize: 10,
+            socketTimeoutMS: 45000,
+        };
+
+        cached.promise = mongoose.connect(mongoUri, opts).then((mongooseInstance) => {
+            console.log(`✅ Database connected successfully: ${mongooseInstance.connection.host}`);
+            return mongooseInstance;
+        });
+    }
+
     try {
-        const mongoUri = process.env.MONGODB_URI || process.env.MONGO_URI;
-        if (!mongoUri) {
-            console.error('❌ MONGODB_URI is not defined in environment variables.');
-            throw new Error('MONGODB_URI environment variable is required');
-        }
-        const conn = await mongoose.connect(mongoUri);
-        isConnected = true;
-        console.log(`✅ Database connected successfully`);
-        console.log(`   Host: ${conn.connection.host}`);
-        console.log(`   Database: ${conn.connection.name}`);
+        cached.conn = await cached.promise;
     } catch (error) {
-        console.log('❌ Database connection failed');
-        const safeErrorMessage = error.message.replace(/:([^:@]+)@/, ':****@');
-        console.log(`Error: ${safeErrorMessage}`);
-        if (!process.env.VERCEL) {
-            process.exit(1);
-        }
+        cached.promise = null;
+        console.error('❌ Database connection failed:', error.message);
         throw error;
     }
+
+    return cached.conn;
 };
 
 module.exports = connectDB;
