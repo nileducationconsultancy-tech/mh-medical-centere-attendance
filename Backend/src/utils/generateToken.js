@@ -1,7 +1,9 @@
 const jwt = require('jsonwebtoken');
 
+const JWT_SECRET = process.env.JWT_SECRET || 'mh_medical_centre_jwt_secret_token_secure_2026';
+
 const generateToken = (res, userId) => {
-    const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ userId }, JWT_SECRET, {
         expiresIn: '30d'
     });
 

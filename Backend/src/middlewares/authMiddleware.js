@@ -13,9 +13,11 @@ const protect = async (req, res, next) => {
         token = req.query.token;
     }
 
+const JWT_SECRET = process.env.JWT_SECRET || 'mh_medical_centre_jwt_secret_token_secure_2026';
+
     if (token) {
         try {
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            const decoded = jwt.verify(token, JWT_SECRET);
             const user = await User.findById(decoded.userId).select('-passwordHash').populate('employeeId');
             
             if (!user) {

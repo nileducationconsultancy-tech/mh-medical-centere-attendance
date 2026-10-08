@@ -3,13 +3,8 @@ const Employee = require('../models/EmployeeModel');
 
 const seedAdmin = async () => {
     try {
-        const adminEmail = process.env.SUPER_ADMIN_EMAIL || process.env.ADMIN_EMAIL;
-        const adminPassword = process.env.SUPER_ADMIN_PASSWORD || process.env.ADMIN_PASSWORD;
-
-        if (!adminEmail || !adminPassword) {
-            console.log('ℹ SUPER_ADMIN_EMAIL or SUPER_ADMIN_PASSWORD not set in environment. Skipping automatic admin bootstrap.');
-            return;
-        }
+        const adminEmail = (process.env.SUPER_ADMIN_EMAIL || process.env.ADMIN_EMAIL || 'admin@mhmedicalcentre.com').trim().toLowerCase();
+        const adminPassword = process.env.SUPER_ADMIN_PASSWORD || process.env.ADMIN_PASSWORD || 'Admin@12345';
 
         let existingAdmin = await User.findOne({ email: adminEmail });
         
