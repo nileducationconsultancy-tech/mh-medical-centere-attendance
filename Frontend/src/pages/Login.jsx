@@ -83,19 +83,9 @@ const Login = () => {
                             Intelligent attendance & payroll management.
                         </h1>
                         
-                        {/* Hospital Campus / Brand Showcase Image */}
-                        <div className="my-8 relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl shadow-blue-950/40 group">
-                            <img 
-                                src="/image.png" 
-                                alt="MH Medical Centre" 
-                                className="w-full h-44 xl:h-52 object-cover object-center transform transition duration-500 group-hover:scale-105"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-[#070B14]/80 via-transparent to-transparent"></div>
-                            <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between text-xs text-slate-200">
-                                <span className="font-semibold tracking-wide">MH Medical Centre Campus</span>
-                                <span className="px-2 py-0.5 rounded-full bg-blue-500/30 backdrop-blur-md border border-blue-400/30 text-[10px] font-bold text-blue-200">Official Portal</span>
-                            </div>
-                        </div>
+                        <p className="text-slate-400 text-base mb-12 leading-relaxed">
+                            A unified enterprise portal for real-time employee check-ins, automated salary calculation, and accurate attendance tracking.
+                        </p>
 
                         <div className="space-y-4">
                             <div className="flex items-center gap-4 p-3.5 rounded-2xl bg-white/[0.03] border border-white/[0.06] backdrop-blur-sm">
@@ -146,7 +136,20 @@ const Login = () => {
                 {/* Login Glass Card */}
                 <div className="w-full max-w-[420px] bg-[#0E1526]/80 backdrop-blur-xl border border-white/[0.08] p-6 sm:p-9 rounded-3xl shadow-2xl shadow-black/80">
                     
-                    <div className="mb-6 text-center sm:text-left">
+                    {/* Rounded Circular Photo above input fields */}
+                    <div className="flex justify-center mb-6">
+                        <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full p-1 bg-gradient-to-tr from-blue-600 via-indigo-500 to-sky-400 shadow-xl shadow-blue-950/60 group">
+                            <div className="w-full h-full rounded-full overflow-hidden bg-[#070B14] border-2 border-[#0E1526]">
+                                <img 
+                                    src="/image.png" 
+                                    alt="MH Medical Centre" 
+                                    className="w-full h-full object-cover object-center transform transition duration-500 group-hover:scale-110"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="mb-6 text-center">
                         <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Sign In</h2>
                         <p className="text-slate-400 text-xs sm:text-sm mt-1">Enter your credentials to access your portal</p>
                     </div>
