@@ -104,6 +104,17 @@ app.use('/api/payslips', payslipRoutes);
 app.use('/api/documents', documentRoutes);
 app.use('/api/document-types', documentTypeRoutes);
 
+// Root Landing Endpoint
+app.get('/', (req, res) => {
+    res.status(200).json({
+        success: true,
+        message: 'MH Medical Centre API Server is running',
+        environment: process.env.NODE_ENV || 'development',
+        healthCheck: '/api/health',
+        timestamp: new Date().toISOString()
+    });
+});
+
 // Health check endpoint with database diagnostics
 app.get('/api/health', (req, res) => {
     const mongoose = require('mongoose');
